@@ -1,4 +1,4 @@
-# 📊 Functional Data Processing Project (Functional-data-processing)
+#  Functional Data Processing Project (Functional-data-processing)
 
 This repository contains two distinct implementations for a data processing pipeline: one built using a **functional programming style** and the other developed using an **imperative programming style**.
 
@@ -6,7 +6,7 @@ The goal of this project is to analyze retail store sales data (`retail_store_sa
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 To run or contribute to this project, you will need to clone the repository and install the necessary dependencies (e.g., Python, Pandas, etc.).
 

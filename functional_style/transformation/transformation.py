@@ -101,6 +101,35 @@ def fix_types(records):
     new_record['Price Per Unit'] = safe_float(records.get('Price Per Unit'))
     return new_record
 
+# ======================================SAVE TO CSV==============================
+
+
+
+
+#def restructure_report(report_dict, key_name="Category", value_name="Total Revenue"):
+#    """Converts a summary dictionary into a list of dictionaries for CSV."""
+#    return [{key_name: k, value_name: v} for k, v in report_dict.items()]
+
+
+def save_csv(filename, records):
+    """Saves a list of dictionaries to a CSV file."""
+    if not records or not isinstance(records, list) or not isinstance(records[0], dict):
+        print(f"Warning/Error: Cannot save {filename}. Input is empty or not a list of dictionaries.")
+        return
+
+    fieldnames = list(records[0].keys())
+
+    try:
+        with open(filename, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(records)
+
+        print(f"Success: Data saved to '{filename}'.")
+
+    except IOError as e:
+        print(f"Error writing to file {filename}: {e}")
+
 
 # ==========================================
 # 2. THE TEST SCRIPT (Execution)
@@ -130,9 +159,10 @@ print(f"2. MAP: Fixed types. Sample 'Total Spent': {data_typed[0]['Total Spent']
 # ---------------------------------------------------------
 positive_condition = create_condition('Total Spent', operator.gt, 0)
 data_filtered = filter_records(data_typed, positive_condition)
+save_csv("filtered data.csv",data_filtered)
 print(f"3. FILTER: Kept {len(data_filtered)} positive records (Dropped {len(data_typed) - len(data_filtered)}).")
 
-# 4. TEST ADD COLUMN (Expected Total & Tax)
+# 4. TEST ADD COLUMN (Expected Total and Tax)
 # ---------------------------------------------------------
 data_w_expected = add_column(data_filtered, 'Expected Total', calculate_expected_total)
 data_w_tax = add_column(data_w_expected, 'Tax', calculate_tax)
@@ -149,9 +179,18 @@ print(f"5. DROP COLUMN: Removed 'Item'. Remaining Keys: {list(data_dropped[0].ke
 grouped_data = group_by(data_dropped, lambda r: r['Category'])
 print(f"6. GROUP BY: Found {len(grouped_data)} categories: {list(grouped_data.keys())}")
 
+
 # 7. TEST AGGREGATE (Sum Revenue)
 # ---------------------------------------------------------
 final_report = aggregate(grouped_data, sum_revenue)
+
 print("\n--- 7. FINAL AGGREGATE REPORT (Revenue per Category) ---")
 import pprint
 pprint.pprint(final_report)
+
+final_report_dict = aggregate(grouped_data, sum_revenue) # Renamed to show it's a dictionary
+
+print("\n--- 7. FINAL AGGREGATE REPORT (Revenue per Category) ---")
+import pprint
+pprint.pprint(final_report_dict)
+
